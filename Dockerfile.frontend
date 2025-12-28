@@ -1,4 +1,4 @@
-# Next.js Frontend Dockerfile
+git commit -m "Meaningful message"# Next.js Frontend Dockerfile
 FROM node:20-alpine AS base
 
 # Install dependencies only when needed

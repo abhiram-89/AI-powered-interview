@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # MongoDB Database
+  mongodb:
+    image: mongo:7.0
+    container_name: ai_interview_mongodb
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password123
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - mongodb_config:/data/configdb
+    networks:
+      - ai_interview_network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai_interview_backend
+    restart: always
+    environment:
+      MONGODB_URL: mongodb://admin:password123@mongodb:27017/ai_interview_assistant?authSource=admin
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    networks:
+      - ai_interview_network
+    volumes:
+      - ./backend:/app
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: ai_interview_frontend
+    restart: always
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8000
+      NEXT_PUBLIC_USE_MOCK_DATA: false
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - ai_interview_network
+
+volumes:
+  mongodb_data:
+  mongodb_config:
+
+networks:
+  ai_interview_network:
+    driver: bridge

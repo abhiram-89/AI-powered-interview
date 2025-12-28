@@ -173,7 +173,7 @@ Highlights strengths and weaknesses
 Gives improvement suggestions
 
 🔐 Authentication & Security
------------------------------/>
+-----------------------------
 
 
 Secure user authentication
